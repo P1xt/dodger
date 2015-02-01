@@ -1,0 +1,30 @@
+doctype html
+html(lang='en')
+html
+    head
+        meta(charset='utf-8')
+        meta(name="viewport")
+        meta(content="width=device-width, initial-scale=1")
+        title P1xt > Dodger
+        link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css')
+        link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootswatch/3.3.1/cyborg/bootstrap.min.css')
+        link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        block extracss
+    body
+        .navbar.navbar-fixed-top.navbar-default
+            .container
+                .navbar-header
+                    button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.navbar-brand(href='/') <i class="fa fa-code"></i> Dodger
+
+        block content
+        script(src='//code.jquery.com/jquery-2.1.3.min.js')
+        script(src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
+        script(src='//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js')
+        script(src='/public/javascripts/dodger.js')
+
+        block extrascripts
