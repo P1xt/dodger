@@ -6,6 +6,11 @@ $(document).ready(function() {
     var baddies = [];
     var cursors, pauseKey, upKey, downKey, leftKey, rightKey;
     var timeCheck, lastBaddieTime;
+    var gameOver = false;
+    var timer;
+    var scoreText;
+    var gameOverText;
+    var score = 0;
 
     function preload () {
 
@@ -15,7 +20,6 @@ $(document).ready(function() {
     }
 
     function create () {
-        game.stage.backgroundColor = '#FFFFFF';
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.physics.arcade.gravity.y = 100;
         cursors = game.input.keyboard.createCursorKeys();
@@ -27,6 +31,7 @@ $(document).ready(function() {
         player.body.velocity.setTo(0, 0);
         player.body.acceleration.setTo(0, 0);
         player.body.collideWorldBounds = true;
+        player.scale.set(.5 , .5 );
 
         // baddies
         baddies = game.add.group();
@@ -42,35 +47,63 @@ $(document).ready(function() {
 
         timeCheck = game.time.now;
         lastBaddieTime = game.time.now;
+
+        //  score
+        timer = game.time.create(false);
+        timer.loop(1000, updateCounter, this);
+        timer.start();
+        scoreText = game.add.text(32, 10, 'score: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
+        gameOverText = game.add.text(game.world.centerX, game.world.centerX -100, '', { font: "40px Arial", fill: "#ffffff", align: "center" });
+        gameOverText.anchor.setTo(0.5, 0.5);
+
+
     }
     function update () {
-        if (baddies.total < 10 && (game.time.now - lastBaddieTime) > 1000) {
-            var spawnX = Math.floor(Math.random()*(game.world.width-0+1)+0);
-            baddie = game.add.sprite(spawnX,50, 'baddie');
-            baddie.checkWorldBounds = true;
-            baddie.outOfBoundsKill = true;
-            baddies.add(baddie);
-            lastBaddieTime = game.time.now;
-            console.log(baddies);
-        }
-
-        if (player.alive) {
-            player.body.velocity.setTo(0, 0);
-            if (leftKey.isDown) {
-                player.body.velocity.x = -400;
-            } else if (rightKey.isDown) {
-                player.body.velocity.x = 400;
-            } else if (upKey.isDown) {
-                player.body.velocity.y = -400;
-            } else if (downKey.isDown) {
-                player.body.velocity.y = 400;
+        if (!gameOver) {
+            if (baddies.total < 10 && (game.time.now - lastBaddieTime) > 1000) {
+                var spawnX = Math.floor(Math.random()*(game.world.width-0+1)+0);
+                baddie = game.add.sprite(spawnX,50, 'baddie');
+                baddie.checkWorldBounds = true;
+                baddie.outOfBoundsKill = true;
+                baddie.scale.set(.5 , .5 );
+                baddies.add(baddie);
+                lastBaddieTime = game.time.now;
             }
 
+            if (player.alive) {
+                player.body.velocity.setTo(0, 0);
+                if (leftKey.isDown) {
+                    player.body.velocity.x = -400;
+                } else if (rightKey.isDown) {
+                    player.body.velocity.x = 400;
+                } else if (upKey.isDown) {
+                    player.body.velocity.y = -400;
+                } else if (downKey.isDown) {
+                    player.body.velocity.y = 400;
+                }
+
+            }
+            game.physics.arcade.overlap(baddies, player, collisionHandler, null, this);
+            game.debug.text('Score: ' + score);
+            timeCheck = game.time.now;
+        } else {
+            timer.stop();
+            baddies.destroy();
+            player.kill();
+            player.destroy();
+            gameOverText.text = 'Game Over!';
+            gameOverText.visible = true;
         }
-        timeCheck = game.time.now;
+
     }
-    function baddieGone (baddie) {
-        console.log(baddie);
-        console.log(baddies);
+    function collisionHandler (baddie, player) {
+
+        gameOver = true;
+    }
+    function updateCounter() {
+
+        score +=10;
+        scoreText.text = 'score: ' + score;
+
     }
 });
